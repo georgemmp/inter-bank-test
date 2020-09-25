@@ -20,10 +20,14 @@ public class SingleDigitService {
 	@Autowired
 	private UserService userService;
 	
+	private Util util;
+	
 	public SingleDigit save(SingleDigit singleDigit) {
 		singleDigit.setId(null);
-
-		Util.addInCache(singleDigit);
+		
+		util = Util.getUnique();
+		
+		util.addInCache(singleDigit);
 		
 		return this.singleDigitRepository.save(singleDigit);
 	}

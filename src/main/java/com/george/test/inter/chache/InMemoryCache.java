@@ -8,12 +8,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class InMemoryCache {
+	
+	private static InMemoryCache unique = new InMemoryCache();
 
 	public static final int PERIOD_IN_SEC = 5;
 
-	private final static Map<String, Object> cache = new HashMap<>();
+	private final Map<String, Object> cache = new HashMap<>();
 
-	public InMemoryCache() {
+	private InMemoryCache() {
 		Thread cleanerThread = new Thread(() -> {
 			while (!Thread.currentThread().isInterrupted()) {
 				try {
@@ -26,8 +28,12 @@ public class InMemoryCache {
 		cleanerThread.setDaemon(true);
 		cleanerThread.start();
 	}
+	
+	public static synchronized InMemoryCache getUnique() {
+		return unique;
+	}
 
-	public static void add(String key, Object value) {
+	public void add(String key, Object value) {
 		if (key == null) {
 			return;
 		}
@@ -39,23 +45,23 @@ public class InMemoryCache {
 		}
 	}
 
-	public static void remove(String key) {
+	public void remove(String key) {
 		cache.remove(key);
 	}
 
-	public static Object get(String key) {
+	public Object get(String key) {
 		return cache.get(key);
 	}
 
-	public static void clear() {
+	public void clear() {
 		cache.clear();
 	}
 
-	public static long size() {
+	public long size() {
 		return cache.size();
 	}
 
-	public static List<Entry<String, Object>> buildList() {
+	public List<Entry<String, Object>> buildList() {
 		Set<Entry<String, Object>> set = cache.entrySet();
 		List<Entry<String, Object>> list = new ArrayList<Entry<String,Object>>(set);
 		return list;
